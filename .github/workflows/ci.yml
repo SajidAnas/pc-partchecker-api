@@ -25,6 +25,10 @@ jobs:
             sleep 2
           done
 
+      - name: Install pinned deps (constraints) inside app container
+        run: |
+          docker compose exec -T app sh -lc "python -m pip install --upgrade pip && pip install -r requirements.txt -c requirements_exact.txt"
+
       - name: Run tests (inside app container)
         run: |
           docker compose exec -T app pytest -q

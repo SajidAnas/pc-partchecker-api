@@ -16,6 +16,9 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Copy env example
+        run: cp .env.example .env
+
       - name: Build & start services
         run: |
           docker compose up --build -d
@@ -25,13 +28,8 @@ jobs:
             sleep 2
           done
 
-      - name: Install pinned deps (constraints) inside app container
-        run: |
-          docker compose exec -T app sh -lc "python -m pip install --upgrade pip && pip install -r requirements.txt -c requirements_exact.txt"
-
       - name: Run tests (inside app container)
-        run: |
-          docker compose exec -T app pytest -q
+        run: docker compose exec -T app pytest -q
 
       - name: Stop services
         if: always()
